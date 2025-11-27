@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+    <!-- 공통 네브바 fragment 쓰는 방법 익히자 경로 :: frag명칭   -->
+    <!--    <div th:replace="fragment/navbar :: navbar"></div>-->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup"  >
+                <div class="navbar-nav">
+                    <a class="nav-link active" href="/home">홈</a>
+                    <a class="nav-link" href="/user/add">회원가입</a>
+                    <a class="nav-link" href="/user/login">로그인</a>
+                    <a class="nav-link" href="/user/all">회원목록</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <h3 class="text-center my-5"><span th:text="${user.userName}" class="text-primary">user</span> 님 홈페이지에 오신것을 환영합니다. </h3>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

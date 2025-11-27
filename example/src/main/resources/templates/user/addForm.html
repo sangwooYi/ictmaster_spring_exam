@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+        #join-form {
+            background-color: white;
+            width: 400px;
+            height: 550px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px auto;
+        }
+        #join-form label {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .input-form {
+            width: 320px;
+        }
+        .input-form button {
+            width: 100%;
+        }
+        .field-error {
+            font-size: 12px;
+            font-weight: bold;
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <!-- 공통 네브바 fragment 쓰는 방법 익히자 경로 :: frag명칭   -->
+    <!--    <div th:replace="fragment/navbar :: navbar"></div>-->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup"  >
+                <div class="navbar-nav">
+                    <a class="nav-link active" href="/home">홈</a>
+                    <a class="nav-link" href="/user/add">회원가입</a>
+                    <a class="nav-link" href="/user/login">로그인</a>
+                    <a class="nav-link" href="/user/all">회원목록</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="join-form" class="shadow p-3 my-5 bg-body-tertiary rounded">
+        <form th:action th:object="${user}" method="post">
+            <h3 class="text-center mb-2">회원가입</h3>
+            <div class="input-form my-2">
+                <label for="userId">아이디</label>
+                <input id="userId" type="text" th:field="*{userId}" class="form-control" th:errorclass="field-error">
+                <div th:errors="*{userId}" class="field-error"></div>
+            </div>
+            <div class="input-form my-2">
+                <label for="password">비밀번호</label>
+                <input id="password" type="text" th:field="*{password}" class="form-control" th:errorclass="field-error">
+                <div th:errors="*{password}" class="field-error"></div>
+            </div>
+            <div class="input-form my-2">
+                <label for="passwordRe">비밀번호 확인</label>
+                <input id="passwordRe" type="text" th:field="*{passwordRe}" class="form-control" th:errorclass="field-error">
+                <div th:errors="*{passwordRe}" class="field-error"></div>
+            </div>
+            <div class="input-form my-2">
+                <label for="userName">이름</label>
+                <input id="userName" type="text" th:field="*{userName}" class="form-control" th:errorclass="field-error">
+                <div th:errors="*{userName}" class="field-error"></div>
+            </div>
+            <div class="input-form my-2">
+                <label for="phoneNumber">핸드폰</label>
+                <input id="phoneNumber" type="text" th:field="*{phoneNumber}" class="form-control" th:errorclass="field-error">
+                <div th:errors="*{phoneNumber}" class="field-error"></div>
+            </div>
+            <div class="input-form my-3">
+                <button type="submit" class="btn btn-primary">가입</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+
+        function setKeyValid(e) {
+            const curKey= e.key;
+
+            // 숫자, - 만 입력 허용
+            const isAllow = /^[0-9-]$/.test(curKey);
+
+            // 삭제, 탭, 엔터, 왼쪽/오른쪽 화살표, delete 키 허용
+            const isAllowKey = ['Backspace', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(curKey);
+
+
+            // e.ctrlKey 는 컨트롤 키 + 다른 입력이 발생한 경우에 true 로 (복붙 방지용)
+            if (!isAllow && !isAllowKey && !e.ctrlKey) {
+                e.preventDefault();
+                return false;
+            }
+
+            // 한글은 강제로 삭제해줘야 함
+            const curText = document.getElementById('phoneNumber').value;
+            document.getElementById('phoneNumber').value = curText.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '');
+
+            return true;
+        }
+
+        // 전화번호는 숫자, - 입력만 허용 ( 허용여부 결정해서 preventDefault 해주면 된다.
+        document.getElementById('phoneNumber').addEventListener('keydown', (e) => {
+            return setKeyValid(e);
+        });
+
+        document.getElementById('phoneNumber').addEventListener('change', (e) => {
+            const curText = document.getElementById('phoneNumber').value;
+            document.getElementById('phoneNumber').value = curText.replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '');
+        })
+
+    </script>
+</body>
+</html>
