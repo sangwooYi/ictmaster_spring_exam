@@ -14,9 +14,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup"  >
                 <div class="navbar-nav">
-                    <a class="nav-link active" href="/home">홈</a>
-                    <a class="nav-link" href="/user/add">회원가입</a>
-                    <a class="nav-link" href="/user/login">로그인</a>
+                    <a class="nav-link active" href="/">홈</a>
+                    <th:block th:if="${isLogin eq null or isLogin eq false}">
+                        <a class="nav-link" href="/user/add">회원가입</a>
+                        <a class="nav-link" href="/user/login">로그인</a>
+                    </th:block>
+                    <th:block th:if="${isLogin ne null and isLogin eq true}">
+                        <a class="nav-link" href="/user/logout">로그아웃</a>
+                    </th:block>
                     <a class="nav-link" href="/user/all">회원목록</a>
                 </div>
             </div>

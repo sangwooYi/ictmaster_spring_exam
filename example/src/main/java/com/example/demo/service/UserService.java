@@ -3,9 +3,15 @@ package com.example.demo.service;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +140,98 @@ public class UserService {
 
         return userDto;
 
+    }
+
+    /**
+     *  회원가입 관련 유효성 체크
+     */
+    public void checkValidForSaveUser(UserDto user, BindingResult bindingResult) {
+        // 빈값 처리 체크
+        if (!StringUtils.hasText(user.getUserId())) {
+            bindingResult.addError(new FieldError("user", "userId", "유저 ID는 필수입니다."));
+        }
+        if (!StringUtils.hasText(user.getPassword())) {
+            bindingResult.addError(new FieldError("user", "password", "비밀번호 입력은 필수입니다."));
+        }
+        if (!(user.getPassword().equals(user.getPasswordRe()))) {
+            bindingResult.addError(new FieldError("user", "passwordRe", "비밀번호와 재입력비밀번호가 일치하지 않습니다."));
+        }
+        if (!StringUtils.hasText(user.getUserName())) {
+            bindingResult.addError(new FieldError("user", "userName", "사용자 이름은 필수입니다. "));
+        }
+
+        // 연락처 넘어왔다면 정규식 검사 (숫자로만 10~11자리로 허용)
+        String regex = "\\d{10,11}";
+        if (!ObjectUtils.isEmpty(user.getPhoneNumber()) && !user.getPhoneNumber().matches(regex)) {
+            bindingResult.addError(new FieldError("user", "phoneNumber", "핸드폰번호 형식이 적절하지 않습니다."));
+        }
+
+        UserDto findUser = this.findUserByUserID(user.getUserId());
+
+        if (!ObjectUtils.isEmpty(findUser)) {
+            bindingResult.addError(new FieldError("user", "userId", "이미 존재하는 ID 입니다."));
+        }
+    }
+
+    /**
+     *  로그인 유효성 체크
+     */
+    public void checkValidForLogin(UserDto userDto, BindingResult bindingResult) {
+
+        if (!StringUtils.hasText(userDto.getUserId())) {
+            bindingResult.addError(new FieldError("user", "userId", "아이디를 입력해 주세요"));
+        }
+
+        if (!StringUtils.hasText(userDto.getPassword())) {
+            bindingResult.addError(new FieldError("user", "password", "비밀번호를 입력해 주세요"));
+        }
+
+        UserDto user = this.findUserByUserID(userDto.getUserId());
+
+        if (ObjectUtils.isEmpty(user) || !user.getPassword().equals(userDto.getPassword())) {
+            bindingResult.addError(new ObjectError("loginFail", "아이디 혹은 비밀번호가 일치하지 않습니다."));
+        }
+    }
+
+    /**
+     * 쿠키 존재여부 파악
+     * @param request
+     * @param cookieName
+     * @return
+     */
+    public boolean isHasCookies(HttpServletRequest request, String cookieName) {
+
+        boolean isLogin = false;
+
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+
+            if (cookie.getName().equals(cookieName)) {
+                isLogin = true;
+                break;
+            }
+        }
+        return isLogin;
+    }
+
+    /**
+     * 값 일치까지 확인
+     * @param request
+     * @param cookieName
+     * @param cookieValue
+     * @return
+     */
+    public boolean isHasCookies(HttpServletRequest request, String cookieName, String cookieValue) {
+        boolean isLogin = false;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            // 실제 유저 ID와 동일한지도 체크 , 아니면 로그인화면으로 리다이렉트
+            if (cookie.getName().equals(cookieName) && cookie.getValue().equals(cookieValue)) {
+                isLogin = true;
+                break;
+            }
+        }
+        return isLogin;
     }
 
 }
