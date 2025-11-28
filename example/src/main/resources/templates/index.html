@@ -8,7 +8,12 @@
 <body>
     <div th:replace="fragment/navbar :: navbar"></div>
 
-    <h3 class="d-flex justify-content-center my-5 text-dark">홈페이지에 오신 것을 환영합니다.</h3>
+    <th:block th:if="${isLogin ne null and isLogin eq true}">
+        <h3 class="text-center my-5"><span th:text="${userName}" class="text-primary">user</span> 님 홈페이지에 오신것을 환영합니다. </h3>
+    </th:block>
+    <th:block th:if="${isLogin eq null or isLogin eq false}">
+        <h3 class="d-flex justify-content-center my-5 text-dark">홈페이지에 오신 것을 환영합니다.</h3>
+    </th:block>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

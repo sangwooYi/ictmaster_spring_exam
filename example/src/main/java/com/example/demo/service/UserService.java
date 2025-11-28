@@ -193,45 +193,4 @@ public class UserService {
         }
     }
 
-    /**
-     * 쿠키 존재여부 파악
-     * @param request
-     * @param cookieName
-     * @return
-     */
-    public boolean isHasCookies(HttpServletRequest request, String cookieName) {
-
-        boolean isLogin = false;
-
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-
-            if (cookie.getName().equals(cookieName)) {
-                isLogin = true;
-                break;
-            }
-        }
-        return isLogin;
-    }
-
-    /**
-     * 값 일치까지 확인
-     * @param request
-     * @param cookieName
-     * @param cookieValue
-     * @return
-     */
-    public boolean isHasCookies(HttpServletRequest request, String cookieName, String cookieValue) {
-        boolean isLogin = false;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            // 실제 유저 ID와 동일한지도 체크 , 아니면 로그인화면으로 리다이렉트
-            if (cookie.getName().equals(cookieName) && cookie.getValue().equals(cookieValue)) {
-                isLogin = true;
-                break;
-            }
-        }
-        return isLogin;
-    }
-
 }

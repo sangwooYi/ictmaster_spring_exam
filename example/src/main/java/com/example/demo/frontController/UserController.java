@@ -2,7 +2,7 @@ package com.example.demo.frontController;
 
 
 import com.example.demo.dto.UserDto;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.CookieService;
 import com.example.demo.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
+    private final CookieService cookieService;
 
     @GetMapping("/add")
     public String addForm(Model model) {
@@ -58,7 +58,7 @@ public class UserController {
     public String userDetail(HttpServletRequest request,
                              @PathVariable String userId, Model model) {
 
-        boolean isLogin = userService.isHasCookies(request, "loginUserId", userId);
+        boolean isLogin = cookieService.isHasCookies(request, "loginUserId", userId);
 
         if (!isLogin) {
             return  "redirect:/user/login";
@@ -97,10 +97,8 @@ public class UserController {
         UserDto user = userService.findUserByUserID(userDto.getUserId());
 
         // 로그인 성공하면 로그인정보 쿠키에 저장
-        Cookie cookie =  new Cookie("loginUserId", user.getUserId());
-        cookie.setPath("/");
-        cookie.setMaxAge(2*60*60);  // 로그인 유효기간 2시간
-
+        Integer maxAge = 2*60*60;  // 2시간
+        Cookie cookie =  cookieService.makeCookie("loginUserId", user.getUserId(), "/", maxAge);
         response.addCookie(cookie);
 
         redirectAttributes.addAttribute("userId", user.getUserId());
@@ -111,7 +109,7 @@ public class UserController {
     public String allUserList(HttpServletRequest request, Model model) {
 
         // 로그인 안된 상태이면 로그인 페이지로 리다이렉트
-        boolean isLogin = userService.isHasCookies(request, "loginUserId");
+        boolean isLogin = cookieService.isHasCookies(request, "loginUserId");
 
         // 쿠키가 없으면 로그인페이지로 리다이렉트
         if (!isLogin) {
@@ -130,9 +128,7 @@ public class UserController {
     public String logout(HttpServletResponse response) {
 
         // loginUserId 쿠키 제거
-        Cookie cookie = new Cookie("loginUserId", "");
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
+        Cookie cookie = cookieService.makeCookie("loginUserId", "", "/", 0);
         response.addCookie(cookie);
         
         return "redirect:/";
